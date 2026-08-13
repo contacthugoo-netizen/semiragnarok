@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>RAGNARÖK — Staff SEMI 2026</title>
+<meta name="description" content="Planning de staff — Séminaire d'intégration EDHEC 2026">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SEMI 2026">
+<meta name="theme-color" content="#0b0d10">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/odinson" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/norse" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0d10; --bg2:#12151a; --card:#161a20; --card2:#1c212a;
+    --line:#2a303a; --line2:#3a424f;
+    --txt:#f2f3f5; --txt2:#9aa3b0; --txt3:#6b7482;
+    --accent:#e8e9eb;
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bot:env(safe-area-inset-bottom,0px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background-image:
+      radial-gradient(ellipse 90% 45% at 50% -10%, #1d232c 0%, transparent 60%),
+      radial-gradient(ellipse 60% 30% at 85% 20%, #161c24 0%, transparent 70%);
+    background-attachment:fixed;
+    min-height:100dvh;
+    overscroll-behavior-y:none;
+  }
+  .rune{font-family:'Odinson','Norse','MedievalSharp',serif;letter-spacing:.06em}
+
+  /* ===== format iPhone : tout est contraint à une largeur de téléphone ===== */
+  .shell{max-width:430px;margin:0 auto;width:100%}
+  @media (min-width:520px){
+    body{background-color:#07080a}
+    #phone{
+      max-width:430px;margin:24px auto;min-height:calc(100dvh - 48px);
+      border:1px solid var(--line);border-radius:34px;overflow:hidden;position:relative;
+      background:var(--bg);box-shadow:0 30px 80px rgba(0,0,0,.6);
+    }
+    header{position:absolute;left:0;right:0;top:0}
+    nav{position:absolute}
+    main{padding-top:78px;height:calc(100dvh - 48px);overflow-y:auto}
+    .wm{position:absolute}
+  }
+
+  /* ===== splash screen ===== */
+  #splash{
+    position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:0;
+    background:var(--bg);
+    background-image:radial-gradient(ellipse 90% 45% at 50% -10%, #1d232c 0%, transparent 60%);
+    transition:opacity .5s ease;
+  }
+  #splash.out{opacity:0;pointer-events:none}
+  #splash img.slogo{width:110px;height:110px;object-fit:contain;margin-bottom:26px;
+    animation:breathe 2.4s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.05);opacity:1}}
+  #splash .stitle{font-family:'Odinson','Norse','MedievalSharp',serif;font-size:44px;letter-spacing:.08em;line-height:1}
+  #splash .ssub{font-family:'Odinson','Norse','MedievalSharp',serif;font-size:19px;color:var(--txt2);
+    letter-spacing:.3em;margin-top:10px}
+  #splash .sload{margin-top:38px;width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+  #splash .sload i{display:block;height:100%;width:40%;background:var(--txt);border-radius:2px;
+    animation:slide 1.1s ease-in-out infinite}
+  @keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+  #splash .swm{position:absolute;bottom:-6dvh;right:-10vh;height:52dvh;opacity:.05;pointer-events:none}
+  @media (min-width:520px){
+    #splash{position:absolute;border-radius:34px}
+  }
+
+  /* watermark serpent */
+  .wm{
+    position:fixed; right:-12vh; bottom:6dvh; height:64dvh; opacity:.05;
+    pointer-events:none; z-index:0;
+  }
+
+  header{
+    position:sticky; top:0; z-index:20;
+    padding:calc(var(--safe-top) + 10px) 18px 10px;
+    background:linear-gradient(to bottom, rgba(11,13,16,.96) 60%, rgba(11,13,16,.75));
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .hrow{display:flex;align-items:center;gap:12px}
+  header img.logo{height:36px;width:36px;object-fit:contain}
+  header .titles{flex:1;min-width:0}
+  header h1{font-size:22px;line-height:1;letter-spacing:.1em}
+  header .sub{font-size:12px;color:var(--txt2);text-transform:uppercase;letter-spacing:.28em;margin-top:3px;
+    font-family:'Odinson','Norse','MedievalSharp',serif}
+  header .clock{font-size:12px;color:var(--txt2);font-variant-numeric:tabular-nums;text-align:right;line-height:1.35}
+  header .clock b{color:var(--txt);font-size:14px}
+
+  main{position:relative;z-index:1;padding:16px 16px calc(86px + var(--safe-bot));max-width:560px;margin:0 auto}
+
+  /* état chargement / erreur */
+  .state{padding:56px 24px;text-align:center;color:var(--txt2)}
+  .state .rune{font-size:20px;color:var(--txt);margin-bottom:10px;display:block}
+  .spinner{width:26px;height:26px;border:2.5px solid var(--line2);border-top-color:var(--txt);border-radius:50%;margin:0 auto 18px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .section-title{
+    font-size:11px;text-transform:uppercase;letter-spacing:.24em;color:var(--txt3);
+    margin:22px 4px 10px;display:flex;align-items:center;gap:10px;
+  }
+  .section-title::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .card.now{border-color:var(--line2);background:linear-gradient(160deg,var(--card2),var(--card))}
+
+  .banner{
+    border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;
+    background:linear-gradient(160deg,#181d25,#12151a);
+    display:flex;align-items:center;gap:14px;
+  }
+  .banner .big{font-size:17px;font-weight:700}
+  .banner .small{font-size:12.5px;color:var(--txt2);margin-top:3px;line-height:1.45}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:#fff;flex:none;
+    box-shadow:0 0 0 0 rgba(255,255,255,.5);animation:pulse 1.8s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+
+  .poste-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .poste-row:last-child{border-bottom:none;padding-bottom:2px}
+  .poste-row:first-child{padding-top:2px}
+  .poste-name{flex:none;width:92px;font-weight:700;font-size:13px;padding-top:2px;
+    text-transform:uppercase;letter-spacing:.04em}
+  .poste-name.repos{color:var(--txt3)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{
+    background:var(--bg2);border:1px solid var(--line);border-radius:999px;
+    padding:4px 11px;font-size:13px;font-weight:500;
+  }
+  .chip.me{background:var(--txt);color:var(--bg);border-color:var(--txt);font-weight:700}
+  .chip.empty{color:var(--txt3);border-style:dashed}
+
+  .slot-label{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .slot-label .h{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+  .slot-label .d{font-size:12px;color:var(--txt2)}
+
+  /* Moi */
+  .me-head{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  .avatar{
+    width:52px;height:52px;border-radius:14px;background:var(--card2);border:1px solid var(--line2);
+    display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex:none;
+    font-family:'Odinson','Norse','MedievalSharp',serif;
+  }
+  .me-head .n{font-size:20px;font-weight:800}
+  .me-head .t{font-size:12.5px;color:var(--txt2);margin-top:2px}
+  .change-btn{margin-left:auto;background:none;border:1px solid var(--line2);color:var(--txt2);
+    border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer}
+  .shift{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .shift:last-child{border-bottom:none}
+  .shift .hr{flex:none;width:86px;font-weight:700;font-variant-numeric:tabular-nums;font-size:14px}
+  .shift .pl{font-size:14px;font-weight:600}
+  .shift .with{font-size:12px;color:var(--txt2);margin-top:2px;line-height:1.4}
+  .shift.current .hr::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:#fff;margin-right:7px;animation:pulse 1.8s infinite}
+  .free{color:var(--txt3);font-size:13.5px;padding:8px 0}
+
+  /* picker */
+  .picker input{
+    width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;
+    color:var(--txt);padding:13px 16px;font-size:16px;font-family:inherit;outline:none;margin-bottom:12px;
+  }
+  .picker input::placeholder{color:var(--txt3)}
+  .name-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .name-btn{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--txt);
+    padding:13px 10px;font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center;
+  }
+  .name-btn:active{background:var(--card2)}
+
+  /* équipes */
+  .team-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+  .team-head .rune{font-size:17px}
+  .team-head .count{font-size:11.5px;color:var(--txt3)}
+  .member{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .member:last-child{border-bottom:none}
+  .member .nm{font-weight:600;font-size:14.5px;flex:1}
+  .member .nm .badge{font-size:10.5px;color:var(--txt3);font-weight:500;margin-left:6px}
+  .call{
+    text-decoration:none;color:var(--txt);background:var(--bg2);border:1px solid var(--line2);
+    border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .call.none{opacity:.35;pointer-events:none}
+
+  /* tabbar */
+  nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    display:flex;justify-content:space-around;
+    padding:8px 10px calc(8px + var(--safe-bot));
+    background:rgba(11,13,16,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);
+  }
+  nav button{
+    background:none;border:none;color:var(--txt3);font-family:inherit;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10.5px;letter-spacing:.06em;padding:4px 16px;border-radius:12px;
+  }
+  nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  nav button.active{color:var(--txt)}
+  footer{margin-top:34px;text-align:center;color:var(--txt3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+  footer img{height:56px;opacity:.5;display:block;margin:0 auto 10px}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div id="phone">
+
+<div id="splash">
+  <img class="slogo" src="assets/bde-blanc.png" alt="BDE">
+  <div class="stitle">RAGNARÖK</div>
+  <div class="ssub">SEMI 2026</div>
+  <div class="sload"><i></i></div>
+  <img class="swm" src="assets/katharsis-blanc.png" alt="">
+</div>
+
+<img class="wm" src="assets/katharsis-blanc.png" alt="">
+
+<header>
+  <div class="shell hrow">
+    <img class="logo" src="assets/bde-blanc.png" alt="BDE">
+    <div class="titles">
+      <h1 class="rune">RAGNARÖK</h1>
+      <div class="sub">Staff · Semi 2026</div>
+    </div>
+    <div class="clock" id="clock"></div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav id="tabbar" class="hidden">
+  <button data-tab="now" class="active">
+    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    Maintenant
+  </button>
+  <button data-tab="me">
+    <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+    Mon planning
+  </button>
+  <button data-tab="teams">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Équipes
+  </button>
+</nav>
+
+</div><!-- /#phone -->
+
+<script>
+'use strict';
+
+/* ================= CONFIG ================= */
+const XLSX_FILE = 'planning.xlsx';   // le fichier Excel à la racine du repo
+const EVENT_YEAR = 2026;             // année du sémi
+const IGNORE_SHEETS = ['Paramètres','Vue par personne','Fiche individuelle'];
+const REPOS_KEY = 'REPOS';
+const LS_NAME = 'semi_staff_me';
+
+const MONTHS = {jan:1,'fév':2,fev:2,mar:3,avr:4,mai:5,juin:6,juil:7,'août':8,aout:8,sep:9,sept:9,oct:10,nov:11,'déc':12,dec:12};
+const DAYNAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+
+/* ================= STATE ================= */
+let DATA = null;      // {creneaux, staff:[{name,team,phone}], days:[{label,date,postes:[{name,slots:{ci:[names]}}]}]}
+let TAB = 'now';
+let ME = localStorage.getItem(LS_NAME) || null;
+
+/* ================= PARSING ================= */
+function cellStr(ws, r, c){
+  const cell = ws[XLSX.utils.encode_cell({r, c})];
+  if(!cell) return '';
+  const v = (cell.w !== undefined ? cell.w : cell.v);
+  return v == null ? '' : String(v).trim();
+}
+
+function parseWorkbook(wb){
+  const P = wb.Sheets['Paramètres'];
+  if(!P) throw new Error("Feuille 'Paramètres' introuvable");
+
+  // Créneaux : colonne G à partir de la ligne 6
+  const creneaux = [];
+  for(let r = 5; r < 40; r++){
+    const v = cellStr(P, r, 6);
+    if(v && /h/i.test(v)) creneaux.push(v);
+    else if(creneaux.length) break;
+  }
+
+  // Staff : colonnes B/C/D sous l'en-tête "Nom"
+  const staff = [];
+  let headerRow = -1;
+  for(let r = 0; r < 60; r++){
+    if(cellStr(P, r, 1).toLowerCase() === 'nom'){ headerRow = r; break; }
+  }
+  if(headerRow >= 0){
+    for(let r = headerRow + 1; r < headerRow + 120; r++){
+      const name = cellStr(P, r, 1);
+      if(!name){ break; }
+      staff.push({ name, team: cellStr(P, r, 2), phone: cellStr(P, r, 3) });
+    }
+  }
+
+  // Feuilles de jour
+  const days = [];
+  wb.SheetNames.forEach(sn => {
+    if(IGNORE_SHEETS.includes(sn)) return;
+    const ws = wb.Sheets[sn];
+    if(!ws || !ws['!ref']) return;
+    const range = XLSX.utils.decode_range(ws['!ref']);
+
+    // ligne d'en-tête = celle où A === 'POSTE'
+    let hr = -1;
+    for(let r = 0; r <= Math.min(range.e.r, 10); r++){
+      if(cellStr(ws, r, 0).toUpperCase() === 'POSTE'){ hr = r; break; }
+    }
+    if(hr < 0) return;
+
+    // libellés de créneaux (valeurs en cache des formules, sinon fallback Paramètres)
+    const slotLabels = [];
+    for(let c = 2; c < 2 + creneaux.length + 6; c++){
+      const v = cellStr(ws, hr, c);
+      if(v) slotLabels.push(v);
+      else if(slotLabels.length) break;
+    }
+    const labels = slotLabels.length >= creneaux.length ? slotLabels : creneaux;
+
+    // date depuis le nom de feuille "J1 - 18 sept" ou le titre
+    const title = cellStr(ws, 0, 0);
+    let date = null;
+    const m = (sn + ' ' + title).toLowerCase().match(/(\d{1,2})\s*(janv|fév|fev|mars?|avr|mai|juin|juil|août|aout|sept?|oct|nov|déc|dec)/);
+    if(m){
+      const mo = Object.keys(MONTHS).find(k => m[2].startsWith(k) || k.startsWith(m[2]));
+      if(mo) date = new Date(EVENT_YEAR, MONTHS[mo] - 1, parseInt(m[1], 10));
+    }
+
+    // grille : postes (cellules fusionnées → on garde le dernier vu)
+    const postes = [];
+    let cur = null;
+    for(let r = hr + 1; r <= range.e.r; r++){
+      const a = cellStr(ws, r, 0);
+      if(/^effectif/i.test(a)) break;
+      const num = cellStr(ws, r, 1);
+      if(a){
+        cur = { name: a.trim(), slots: {} };
+        postes.push(cur);
+      }
+      if(!cur || (!a && !num)) continue;
+      for(let c = 2; c < 2 + labels.length; c++){
+        const who = cellStr(ws, r, c);
+        if(!who) continue;
+        const ci = c - 2;
+        (cur.slots[ci] = cur.slots[ci] || []).push(who);
+      }
+    }
+    if(postes.length){
+      days.push({ sheet: sn, label: title || sn, date, creneaux: labels, postes });
+    }
+  });
+
+  days.sort((a, b) => (a.date && b.date) ? a.date - b.date : 0);
+  return { creneaux, staff, days };
+}
+
+/* ================= TIME HELPERS ================= */
+function slotHours(label){ // "22h–00h" -> [22,24]
+  const m = label.match(/(\d{1,2})\s*h.*?(\d{1,2})\s*h/);
+  if(!m) return null;
+  let s = +m[1], e = +m[2];
+  if(e <= s) e += 24;
+  return [s, e];
+}
+function dayTitle(d){
+  if(!d.date) return d.label;
+  return DAYNAMES[d.date.getDay()] + ' ' + d.date.getDate() + ' ' +
+    ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][d.date.getMonth()];
+}
+function shortDay(d){
+  if(!d.date) return d.sheet;
+  return DAYNAMES[d.date.getDay()].slice(0,3) + '. ' + d.date.getDate();
+}
+// retourne {di, ci} du créneau courant, ou null
+function currentSlot(now){
+  for(let di = 0; di < DATA.days.length; di++){
+    const d = DATA.days[di];
+    if(!d.date) continue;
+    for(let ci = 0; ci < d.creneaux.length; ci++){
+      const h = slotHours(d.creneaux[ci]);
+      if(!h) continue;
+      const start = new Date(d.date); start.setHours(h[0], 0, 0, 0);
+      const end = new Date(d.date); end.setHours(h[1], 0, 0, 0);
+      if(now >= start && now < end) return { di, ci };
+    }
+  }
+  return null;
+}
+function nextSlot(now){
+  let best = null;
+  DATA.days.forEach((d, di) => {
+    if(!d.date) return;
+    d.creneaux.forEach((cr, ci) => {
+      const h = slotHours(cr);
+      if(!h) return;
+      const start = new Date(d.date); start.setHours(h[0], 0, 0, 0);
+      if(start > now && (!best || start < best.start)) best = { di, ci, start };
+    });
+  });
+  return best;
+}
+function isMe(name){ return ME && name.trim().toLowerCase() === ME.trim().toLowerCase(); }
+
+/* ================= RENDER ================= */
+const app = document.getElementById('app');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function chips(names, opts = {}){
+  if(!names || !names.length) return '<span class="chip empty">—</span>';
+  return names.map(n =>
+    `<span class="chip${isMe(n) ? ' me' : ''}">${esc(n)}</span>`).join('');
+}
+
+function slotCard(di, ci, opts = {}){
+  const d = DATA.days[di];
+  const rows = d.postes.map(p => {
+    const repos = p.name.trim().toUpperCase().startsWith(REPOS_KEY);
+    const names = p.slots[ci] || [];
+    if(repos && !names.length) return '';
+    return `<div class="poste-row">
+      <div class="poste-name${repos ? ' repos' : ''}">${esc(p.name)}</div>
+      <div class="chips">${chips(names)}</div>
+    </div>`;
+  }).join('');
+  return `<div class="card${opts.now ? ' now' : ''}">
+    <div class="slot-label"><span class="h">${esc(d.creneaux[ci])}</span><span class="d">${esc(shortDay(d))}</span></div>
+    ${rows || '<div class="free">Personne de placé sur ce créneau.</div>'}
+  </div>`;
+}
+
+function renderNow(){
+  const now = new Date();
+  const cur = currentSlot(now);
+  const nxt = nextSlot(now);
+  let html = '';
+
+  if(cur){
+    html += `<div class="banner"><span class="live-dot"></span><div>
+      <div class="big">En poste maintenant</div>
+      <div class="small">${esc(dayTitle(DATA.days[cur.di]))} · créneau ${esc(DATA.days[cur.di].creneaux[cur.ci])}</div>
+    </div></div>`;
+    html += slotCard(cur.di, cur.ci, { now: true });
+  } else {
+    const first = DATA.days[0];
+    const started = first && first.date && now >= first.date;
+    html += `<div class="banner"><div>
+      <div class="big rune">${started ? 'Ragnarök est passé…' : 'Le sémi n\u2019a pas commencé'}</div>
+      <div class="small">${started
+        ? 'Le week-end est terminé. Repose-toi, guerrier.'
+        : (first && first.date ? 'Rendez-vous le ' + dayTitle(first).toLowerCase() + '. En attendant, voici le planning.' : 'Voici le planning.')}</div>
+    </div></div>`;
+  }
+
+  if(nxt){
+    html += `<div class="section-title">Créneau suivant</div>`;
+    html += slotCard(nxt.di, nxt.ci);
+  }
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+function renderMe(){
+  if(!ME){ renderPicker(); return; }
+  const person = DATA.staff.find(s => isMe(s.name)) || { name: ME, team: '', phone: '' };
+  const now = new Date();
+  const cur = currentSlot(now);
+
+  let html = `<div class="me-head">
+    <div class="avatar">${esc(person.name[0] || '?')}</div>
+    <div>
+      <div class="n">${esc(person.name)}</div>
+      <div class="t">${esc(person.team || 'Équipe non définie')}${person.phone ? ' · ' + esc(person.phone) : ''}</div>
+    </div>
+    <button class="change-btn" onclick="changeName()">Changer</button>
+  </div>`;
+
+  DATA.days.forEach((d, di) => {
+    html += `<div class="section-title">${esc(dayTitle(d))}</div><div class="card">`;
+    let any = false;
+    d.creneaux.forEach((cr, ci) => {
+      d.postes.forEach(p => {
+        const names = p.slots[ci] || [];
+        if(!names.some(isMe)) return;
+        any = true;
+        const others = names.filter(n => !isMe(n));
+        const isCur = cur && cur.di === di && cur.ci === ci;
+        const repos = p.name.trim().toUpperCase().startsWith(REPOS_KEY);
+        html += `<div class="shift${isCur ? ' current' : ''}">
+          <div class="hr">${esc(cr)}</div>
+          <div>
+            <div class="pl">${repos ? '😴 Repos' : esc(p.name)}</div>
+            ${others.length ? `<div class="with">avec ${esc(others.join(', '))}</div>` : ''}
+          </div>
+        </div>`;
+      });
+    });
+    if(!any) html += `<div class="free">Aucun créneau ce jour — libre comme Fenrir.</div>`;
+    html += `</div>`;
+  });
+
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+function renderPicker(filter = ''){
+  const names = DATA.staff.map(s => s.name)
+    .filter(n => n.toLowerCase().includes(filter.toLowerCase()));
+  app.innerHTML = `
+    <div class="section-title">Qui es-tu, guerrier ?</div>
+    <div class="picker">
+      <input type="text" id="pickerInput" placeholder="Cherche ton nom…" value="${esc(filter)}" autocomplete="off">
+      <div class="name-grid">
+        ${names.map(n => `<button class="name-btn" onclick="pickName('${esc(n).replace(/'/g, "\\'")}')">${esc(n)}</button>`).join('')}
+      </div>
+    </div>${footerHTML()}`;
+  const inp = document.getElementById('pickerInput');
+  inp.addEventListener('input', () => {
+    const grid = app.querySelector('.name-grid');
+    const f = inp.value.toLowerCase();
+    grid.innerHTML = DATA.staff.map(s => s.name)
+      .filter(n => n.toLowerCase().includes(f))
+      .map(n => `<button class="name-btn" onclick="pickName('${esc(n).replace(/'/g, "\\'")}')">${esc(n)}</button>`).join('');
+  });
+  if(filter === '' && !('ontouchstart' in window)) inp.focus();
+}
+window.pickName = function(n){ ME = n; localStorage.setItem(LS_NAME, n); renderMe(); };
+window.changeName = function(){ ME = null; localStorage.removeItem(LS_NAME); renderPicker(); };
+
+function renderTeams(){
+  const teams = {};
+  DATA.staff.forEach(s => {
+    const t = s.team || 'Sans équipe';
+    (teams[t] = teams[t] || []).push(s);
+  });
+  let html = '';
+  Object.keys(teams).sort().forEach(t => {
+    const members = teams[t];
+    html += `<div class="section-title">${esc(t)} <span style="letter-spacing:0">· ${members.length}</span></div><div class="card">`;
+    members.forEach(s => {
+      const tel = (s.phone || '').replace(/[^\d+]/g, '');
+      html += `<div class="member">
+        <div class="nm">${esc(s.name)}${isMe(s.name) ? '<span class="badge">(toi)</span>' : ''}</div>
+        <a class="call${tel ? '' : ' none'}" href="tel:${tel}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          ${tel ? esc(s.phone) : '—'}</a>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+function footerHTML(){
+  return `<footer><img src="assets/katharsis-blanc.png" alt="">Katharsis 72 · BDE EDHEC · Depuis 1954</footer>`;
+}
+
+/* ================= NAV & CLOCK ================= */
+document.querySelectorAll('#tabbar button').forEach(b => {
+  b.addEventListener('click', () => {
+    TAB = b.dataset.tab;
+    document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x === b));
+    render();
+    window.scrollTo({ top: 0 });
+  });
+});
+function render(){
+  if(!DATA) return;
+  if(TAB === 'now') renderNow();
+  else if(TAB === 'me') renderMe();
+  else renderTeams();
+}
+function tickClock(){
+  const n = new Date();
+  document.getElementById('clock').innerHTML =
+    `<b>${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}</b><br>` +
+    DAYNAMES[n.getDay()].slice(0,3) + '. ' + n.getDate();
+}
+tickClock(); setInterval(tickClock, 15000);
+// re-render « maintenant » toutes les minutes pour suivre le créneau
+setInterval(() => { if(TAB === 'now' && DATA) renderNow(); }, 60000);
+
+/* ================= LOAD ================= */
+const SPLASH_MIN = 1100; // durée mini du splash (ms)
+function hideSplash(){
+  const s = document.getElementById('splash');
+  s.classList.add('out');
+  setTimeout(() => s.remove(), 600);
+}
+async function load(){
+  const t0 = Date.now();
+  const done = () => new Promise(r => setTimeout(r, Math.max(0, SPLASH_MIN - (Date.now() - t0))));
+  try{
+    const res = await fetch(XLSX_FILE + '?v=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    DATA = parseWorkbook(wb);
+    if(!DATA.days.length) throw new Error('Aucune feuille de jour trouvée');
+    document.getElementById('tabbar').classList.remove('hidden');
+    // si on connaît déjà la personne, démarrer sur "Maintenant", sinon sur "Mon planning" pour choisir son nom
+    if(!ME){
+      TAB = 'me';
+      document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x.dataset.tab === 'me'));
+    }
+    render();
+    await done();
+    hideSplash();
+  }catch(e){
+    console.error(e);
+    const isLocal = location.protocol === 'file:';
+    app.innerHTML = `<div class="state">
+      <span class="rune">Odin fronce les sourcils…</span>
+      ${isLocal
+        ? `Tu as ouvert le fichier en local : le navigateur bloque la lecture de l'Excel.<br><br>
+           Pas d'inquiétude — <b>tout marchera une fois le dossier mis en ligne sur GitHub Pages</b> (voir le README).`
+        : `Impossible de charger le planning (<code>${esc(String(e.message || e))}</code>).<br><br>
+           Vérifie que le fichier <b>planning.xlsx</b> est bien à la racine du site, puis recharge la page.`}
+    </div>`;
+    await done();
+    hideSplash();
+  }
+}
+load();
+</script>
+</body>
+</html>
