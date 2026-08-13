@@ -1,0 +1,16 @@
+{
+  "name": "RAGNARÖK — Staff SEMI 2026",
+  "short_name": "SEMI 2026",
+  "description": "Planning de staff du séminaire d'intégration EDHEC 2026",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d10",
+  "theme_color": "#0b0d10",
+  "lang": "fr",
+  "icons": [
+    { "src": "assets/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
