@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>RAGNARÖK — Staff SEMI 2026</title>
+<meta name="description" content="Planning de staff — Séminaire d'intégration EDHEC 2026">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SEMI 2026">
+<meta name="theme-color" content="#0b0d10">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/odinson" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/norse" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0d10; --bg2:#12151a; --card:#161a20; --card2:#1c212a;
+    --line:#2a303a; --line2:#3a424f;
+    --txt:#f2f3f5; --txt2:#9aa3b0; --txt3:#6b7482;
+    --accent:#e8e9eb;
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bot:env(safe-area-inset-bottom,0px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background-image:
+      radial-gradient(ellipse 90% 45% at 50% -10%, #1d232c 0%, transparent 60%),
+      radial-gradient(ellipse 60% 30% at 85% 20%, #161c24 0%, transparent 70%);
+    background-attachment:fixed;
+    min-height:100dvh;
+    overscroll-behavior-y:none;
+  }
+  .rune{font-family:'Odinson','Norse','MedievalSharp',serif;letter-spacing:.06em}
+
+  /* ===== format iPhone : tout est contraint à une largeur de téléphone ===== */
+  .shell{max-width:430px;margin:0 auto;width:100%}
+  @media (min-width:520px){
+    body{background-color:#07080a}
+    #phone{
+      max-width:430px;margin:24px auto;min-height:calc(100dvh - 48px);
+      border:1px solid var(--line);border-radius:34px;overflow:hidden;position:relative;
+      background:var(--bg);box-shadow:0 30px 80px rgba(0,0,0,.6);
+    }
+    header{position:absolute;left:0;right:0;top:0}
+    nav{position:absolute}
+    main{padding-top:78px;height:calc(100dvh - 48px);overflow-y:auto}
+    .wm{position:absolute}
+  }
+
+  /* ===== splash screen ===== */
+  #splash{
+    position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:0;
+    background:var(--bg);
+    background-image:radial-gradient(ellipse 90% 45% at 50% -10%, #1d232c 0%, transparent 60%);
+    transition:opacity .5s ease;
+  }
+  #splash.out{opacity:0;pointer-events:none}
+  #splash img.slogo{width:110px;height:110px;object-fit:contain;margin-bottom:26px;
+    animation:breathe 2.4s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.05);opacity:1}}
+  #splash .stitle{font-family:'Odinson','Norse','MedievalSharp',serif;font-size:44px;letter-spacing:.08em;line-height:1}
+  #splash .ssub{font-family:'Odinson','Norse','MedievalSharp',serif;font-size:19px;color:var(--txt2);
+    letter-spacing:.3em;margin-top:10px}
+  #splash .sload{margin-top:38px;width:120px;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+  #splash .sload i{display:block;height:100%;width:40%;background:var(--txt);border-radius:2px;
+    animation:slide 1.1s ease-in-out infinite}
+  @keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+  #splash .swm{position:absolute;bottom:-6dvh;right:-10vh;height:52dvh;opacity:.05;pointer-events:none}
+  @media (min-width:520px){
+    #splash{position:absolute;border-radius:34px}
+  }
+
+  /* watermark serpent */
+  .wm{
+    position:fixed; right:-12vh; bottom:6dvh; height:64dvh; opacity:.05;
+    pointer-events:none; z-index:0;
+  }
+
+  header{
+    position:sticky; top:0; z-index:20;
+    padding:calc(var(--safe-top) + 10px) 18px 10px;
+    background:linear-gradient(to bottom, rgba(11,13,16,.96) 60%, rgba(11,13,16,.75));
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .hrow{display:flex;align-items:center;gap:12px}
+  header img.logo{height:36px;width:36px;object-fit:contain}
+  header .titles{flex:1;min-width:0}
+  header h1{font-size:22px;line-height:1;letter-spacing:.1em}
+  header .sub{font-size:12px;color:var(--txt2);text-transform:uppercase;letter-spacing:.28em;margin-top:3px;
+    font-family:'Odinson','Norse','MedievalSharp',serif}
+  header .clock{font-size:12px;color:var(--txt2);font-variant-numeric:tabular-nums;text-align:right;line-height:1.35}
+  header .clock b{color:var(--txt);font-size:14px}
+
+  main{position:relative;z-index:1;padding:16px 16px calc(86px + var(--safe-bot));max-width:560px;margin:0 auto}
+
+  /* état chargement / erreur */
+  .state{padding:56px 24px;text-align:center;color:var(--txt2)}
+  .state .rune{font-size:20px;color:var(--txt);margin-bottom:10px;display:block}
+  .spinner{width:26px;height:26px;border:2.5px solid var(--line2);border-top-color:var(--txt);border-radius:50%;margin:0 auto 18px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .section-title{
+    font-size:11px;text-transform:uppercase;letter-spacing:.24em;color:var(--txt3);
+    margin:22px 4px 10px;display:flex;align-items:center;gap:10px;
+  }
+  .section-title::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .card.now{border-color:var(--line2);background:linear-gradient(160deg,var(--card2),var(--card))}
+
+  .banner{
+    border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;
+    background:linear-gradient(160deg,#181d25,#12151a);
+    display:flex;align-items:center;gap:14px;
+  }
+  .banner .big{font-size:17px;font-weight:700}
+  .banner .small{font-size:12.5px;color:var(--txt2);margin-top:3px;line-height:1.45}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:#fff;flex:none;
+    box-shadow:0 0 0 0 rgba(255,255,255,.5);animation:pulse 1.8s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+
+  .slot-label{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .slot-label .h{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+  .slot-label .d{font-size:12px;color:var(--txt2)}
+  .prog{font-size:12.5px;color:var(--txt2);line-height:1.45;padding:8px 10px;margin:0 0 10px;
+    border-left:2px solid var(--line2);background:var(--bg2);border-radius:0 8px 8px 0}
+
+  /* ligne équipe → tâche (écran Maintenant) */
+  .team-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .team-row:last-child{border-bottom:none;padding-bottom:2px}
+  .team-row:first-child{padding-top:2px}
+  .team-row .tn{flex:none;width:92px}
+  .team-row .tn b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .team-row .tn small{display:block;font-size:11px;color:var(--txt3);margin-top:1px}
+  .team-row.me .tn b{color:#fff}
+  .task{
+    flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:10px;
+    padding:7px 11px;font-size:13px;font-weight:600;letter-spacing:.02em;
+  }
+  .task.repos{color:var(--txt3);font-weight:500}
+  .task.empty{color:var(--txt3);border-style:dashed;font-weight:500}
+  .team-row.me .task{background:var(--txt);color:var(--bg);border-color:var(--txt);font-weight:700}
+  .team-row.me .task.repos{background:var(--card2);color:var(--txt2);border-color:var(--line2)}
+
+  /* Moi */
+  .me-head{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  .avatar{
+    width:52px;height:52px;border-radius:14px;background:var(--card2);border:1px solid var(--line2);
+    display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex:none;
+    font-family:'Odinson','Norse','MedievalSharp',serif;
+  }
+  .me-head .n{font-size:20px;font-weight:800}
+  .me-head .t{font-size:12.5px;color:var(--txt2);margin-top:2px}
+  .change-btn{margin-left:auto;background:none;border:1px solid var(--line2);color:var(--txt2);
+    border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer}
+  .team-info{font-size:12.5px;color:var(--txt2);line-height:1.5;margin:10px 0 0}
+  .team-info b{color:var(--txt)}
+  .shift{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .shift:last-child{border-bottom:none}
+  .shift .hr{flex:none;width:92px;font-weight:700;font-variant-numeric:tabular-nums;font-size:14px;padding-top:1px}
+  .shift .pl{font-size:14px;font-weight:600}
+  .shift .with{font-size:12px;color:var(--txt2);margin-top:3px;line-height:1.45}
+  .shift.current .hr::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:#fff;margin-right:7px;animation:pulse 1.8s infinite}
+  .shift.repos .pl{color:var(--txt3);font-weight:500}
+  .shift.past{opacity:.45}
+  .free{color:var(--txt3);font-size:13.5px;padding:8px 0}
+
+  /* picker */
+  .picker input{
+    width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;
+    color:var(--txt);padding:13px 16px;font-size:16px;font-family:inherit;outline:none;margin-bottom:12px;
+  }
+  .picker input::placeholder{color:var(--txt3)}
+  .name-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .name-btn{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--txt);
+    padding:13px 10px;font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center;
+  }
+  .name-btn small{display:block;font-size:10.5px;color:var(--txt3);font-weight:500;margin-top:2px}
+  .name-btn:active{background:var(--card2)}
+  .notice{font-size:12.5px;color:var(--txt2);background:var(--bg2);border:1px solid var(--line);
+    border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.45}
+
+  /* équipes */
+  .member{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .member:last-child{border-bottom:none}
+  .member .nm{font-weight:600;font-size:14.5px;flex:1}
+  .member .nm .badge{font-size:10.5px;color:var(--txt3);font-weight:500;margin-left:6px}
+  .member .nm .chef{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--txt);color:var(--bg);border-radius:6px;padding:2px 6px;margin-left:8px;vertical-align:1px}
+  .call{
+    text-decoration:none;color:var(--txt);background:var(--bg2);border:1px solid var(--line2);
+    border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .call.none{opacity:.35;pointer-events:none}
+
+  /* tabbar */
+  nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    display:flex;justify-content:space-around;
+    padding:8px 10px calc(8px + var(--safe-bot));
+    background:rgba(11,13,16,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);
+  }
+  nav button{
+    background:none;border:none;color:var(--txt3);font-family:inherit;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10.5px;letter-spacing:.06em;padding:4px 16px;border-radius:12px;
+  }
+  nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  nav button.active{color:var(--txt)}
+  footer{margin-top:34px;text-align:center;color:var(--txt3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+  footer img{height:56px;opacity:.5;display:block;margin:0 auto 10px}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div id="phone">
+
+<div id="splash">
+  <img class="slogo" src="assets/bde-blanc.png" alt="BDE">
+  <div class="stitle">RAGNARÖK</div>
+  <div class="ssub">SEMI 2026</div>
+  <div class="sload"><i></i></div>
+  <img class="swm" src="assets/katharsis-blanc.png" alt="">
+</div>
+
+<img class="wm" src="assets/katharsis-blanc.png" alt="">
+
+<header>
+  <div class="shell hrow">
+    <img class="logo" src="assets/bde-blanc.png" alt="BDE">
+    <div class="titles">
+      <h1 class="rune">RAGNARÖK</h1>
+      <div class="sub">Staff · Semi 2026</div>
+    </div>
+    <div class="clock" id="clock"></div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav id="tabbar" class="hidden">
+  <button data-tab="now" class="active">
+    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    Maintenant
+  </button>
+  <button data-tab="me">
+    <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+    Mon planning
+  </button>
+  <button data-tab="teams">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Équipes
+  </button>
+</nav>
+
+</div><!-- /#phone -->
+
+<script>
+'use strict';
+
+/* ================= CONFIG ================= */
+const XLSX_FILE = 'planning.xlsx';   // le fichier Excel à la racine du repo
+const EVENT_YEAR = 2026;             // année du sémi
+const REPOS_KEY = 'REPOS';
+const LS_NAME = 'semi_staff_me';
+
+const MONTHS = {jan:1,'fév':2,fev:2,mar:3,avr:4,mai:5,juin:6,juil:7,'août':8,aout:8,sep:9,sept:9,oct:10,nov:11,'déc':12,dec:12};
+const DAYNAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MONTHNAMES = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+/* ================= STATE =================
+   DATA = {
+     teams : [{ name:'Équipe 1', chef:'Célie', members:[{name, phone, genre}] }],
+     staff : [{ name, team, phone, genre }],
+     days  : [{ sheet, label, date, slots:[{ label:'08h–09h', prog:'…', tasks:{ 'Équipe 1':'PLAINE', … } }] }]
+   }
+*/
+let DATA = null;
+let TAB = 'now';
+let ME = localStorage.getItem(LS_NAME) || null;
+
+/* ================= PARSING ================= */
+function cellStr(ws, r, c){
+  const cell = ws[XLSX.utils.encode_cell({r, c})];
+  if(!cell) return '';
+  const v = (cell.w !== undefined ? cell.w : cell.v);
+  return v == null ? '' : String(v).trim();
+}
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+const firstLine = s => String(s || '').split(/\r?\n/)[0].trim();
+
+// cherche une cellule dont le texte normalisé vérifie `pred` ; renvoie {r,c} ou null
+function findCell(ws, pred, maxR = 80, maxC = 30){
+  const range = ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : { e: { r: maxR, c: maxC } };
+  for(let r = 0; r <= Math.min(range.e.r, maxR); r++){
+    for(let c = 0; c <= Math.min(range.e.c, maxC); c++){
+      const v = cellStr(ws, r, c);
+      if(v && pred(norm(v), v)) return { r, c };
+    }
+  }
+  return null;
+}
+
+function parseParametres(P){
+  // --- Équipes + chefs : bloc dont l'en-tête est "ÉQUIPES"
+  const eq = findCell(P, n => n === 'equipes');
+  if(!eq) throw new Error("Bloc 'ÉQUIPES' introuvable dans Paramètres");
+  let chefCol = -1;
+  for(let c = eq.c; c < eq.c + 12; c++){
+    if(norm(cellStr(P, eq.r, c)).startsWith('chef')){ chefCol = c; break; }
+  }
+  const teams = [];
+  for(let r = eq.r + 1; r < eq.r + 30; r++){
+    const name = cellStr(P, r, eq.c);
+    if(!name) break;
+    teams.push({ name, chef: chefCol >= 0 ? cellStr(P, r, chefCol) : '', members: [] });
+  }
+
+  // --- Tableau staff : en-tête "Nom" → colonnes Nom / Équipe / Genre / Téléphone
+  const nomHdr = findCell(P, n => n === 'nom');
+  const staff = [];
+  if(nomHdr){
+    let teamCol = -1, genreCol = -1, phoneCol = -1;
+    for(let c = nomHdr.c + 1; c < nomHdr.c + 10; c++){
+      const h = norm(cellStr(P, nomHdr.r, c));
+      if(h.startsWith('equipe') && teamCol < 0) teamCol = c;
+      else if(h.startsWith('genre') && genreCol < 0) genreCol = c;
+      else if((h.startsWith('tel') || h.startsWith('phone')) && phoneCol < 0) phoneCol = c;
+    }
+    for(let r = nomHdr.r + 1; r < nomHdr.r + 200; r++){
+      const name = cellStr(P, r, nomHdr.c);
+      if(!name) break;
+      staff.push({
+        name,
+        team : teamCol  >= 0 ? firstLine(cellStr(P, r, teamCol)) : '',
+        genre: genreCol >= 0 ? cellStr(P, r, genreCol).toUpperCase() : '',
+        phone: phoneCol >= 0 ? cellStr(P, r, phoneCol) : '',
+      });
+    }
+  }
+
+  // --- Grille de composition : source de vérité pour l'équipe de chacun
+  const comp = findCell(P, n => n.startsWith('composition des equipes'));
+  const gridMembership = {};   // nom (normalisé) -> nom d'équipe
+  if(comp){
+    const hr = comp.r + 1;
+    const cols = [];
+    for(let c = comp.c; c < comp.c + 12 && cols.length < teams.length; c++){
+      const h = firstLine(cellStr(P, hr, c));
+      if(!h){ if(cols.length) break; else continue; }
+      // valeur en cache de "=$B$6" → "Équipe 1" ; si la valeur n'est pas en cache on suit l'ordre des équipes
+      const declared = teams.find(t => norm(t.name) === norm(h));
+      if(declared) cols.push({ c, tname: declared.name });
+      else if(norm(h).startsWith('equipe') && teams[cols.length]) cols.push({ c, tname: teams[cols.length].name });
+      else break;   // on est sorti de la grille (ex. liste des postes juste à droite)
+    }
+    for(let r = hr + 1; r < hr + 30; r++){
+      let anyRow = false;
+      cols.forEach(({ c, tname }) => {
+        const who = cellStr(P, r, c);
+        if(who){ anyRow = true; gridMembership[norm(who)] = tname; }
+      });
+      if(!anyRow) break;
+    }
+  }
+
+  // Fusion : la grille prime, la colonne "Équipe (auto)" sert de secours
+  staff.forEach(s => { s.team = gridMembership[norm(s.name)] || s.team || ''; });
+  // personnes dans la grille mais absentes du tableau → on les ajoute quand même
+  Object.keys(gridMembership).forEach(k => {
+    if(!staff.some(s => norm(s.name) === k)){
+      // retrouver la casse d'origine
+      let orig = k;
+      for(let r = 0; r < 60; r++) for(let c = 0; c < 12; c++){ const v = cellStr(P, r, c); if(norm(v) === k){ orig = v; r = 60; break; } }
+      staff.push({ name: orig, team: gridMembership[k], phone: '', genre: '' });
+    }
+  });
+
+  teams.forEach(t => { t.members = staff.filter(s => s.team === t.name); });
+  // équipes rencontrées dans le staff mais pas déclarées (sécurité)
+  staff.forEach(s => {
+    if(s.team && !teams.some(t => t.name === s.team)) teams.push({ name: s.team, chef: '', members: staff.filter(x => x.team === s.team) });
+  });
+  return { teams, staff };
+}
+
+function parseDay(ws, sheetName, teams){
+  // ligne d'en-tête : celle où la colonne A vaut "CRÉNEAU"
+  const hdr = findCell(ws, n => n === 'creneau' || n === 'creneaux', 12, 2);
+  if(!hdr) return null;
+  const hr = hdr.r;
+  const range = XLSX.utils.decode_range(ws['!ref']);
+
+  let progCol = -1;
+  const teamCols = [];
+  for(let c = hdr.c + 1; c <= range.e.c; c++){
+    const raw = cellStr(ws, hr, c);
+    const h = firstLine(raw);
+    if(!h){ continue; }
+    if(norm(h).startsWith('programme')){ progCol = c; continue; }
+    const declared = teams.find(t => norm(t.name) === norm(h));
+    if(declared) teamCols.push({ c, tname: declared.name });
+    // "ÉQUIPES RÉVEILLÉES" et autres colonnes de contrôle sont ignorées
+  }
+  // en-têtes d'équipe absents (formules non calculées) : on prend l'ordre des équipes après la colonne programme
+  if(!teamCols.length){
+    if(progCol < 0) return null;                    // pas une feuille de jour (ex. fiche individuelle)
+    for(let i = 0; i < teams.length; i++) teamCols.push({ c: progCol + 1 + i, tname: teams[i].name });
+  }
+
+  const slots = [];
+  for(let r = hr + 1; r <= range.e.r; r++){
+    const label = cellStr(ws, r, hdr.c);
+    if(!/^\d{1,2}\s*h/i.test(label)){ if(slots.length) break; else continue; }
+    const tasks = {};
+    teamCols.forEach(({ c, tname }) => {
+      const v = cellStr(ws, r, c);
+      tasks[tname] = v ? v.replace(/\s+/g, ' ').trim() : '';
+    });
+    slots.push({ label, prog: progCol >= 0 ? cellStr(ws, r, progCol) : '', tasks });
+  }
+  if(!slots.length) return null;
+
+  const title = cellStr(ws, 0, 0);
+  let date = null;
+  const m = norm(sheetName + ' ' + title).match(/(\d{1,2})\s*(janv|fev|mars?|avr|mai|juin|juil|aout|sept?|oct|nov|dec)/);
+  if(m){
+    const mo = Object.keys(MONTHS).find(k => norm(k) === m[2] || m[2].startsWith(norm(k)) || norm(k).startsWith(m[2]));
+    if(mo) date = new Date(EVENT_YEAR, MONTHS[mo] - 1, parseInt(m[1], 10));
+  }
+  return { sheet: sheetName, label: title || sheetName, date, slots };
+}
+
+function parseWorkbook(wb){
+  const P = wb.Sheets['Paramètres'] || wb.Sheets[wb.SheetNames.find(n => norm(n).startsWith('param'))];
+  if(!P) throw new Error("Feuille 'Paramètres' introuvable");
+  const { teams, staff } = parseParametres(P);
+
+  const days = [];
+  wb.SheetNames.forEach(sn => {
+    if(P === wb.Sheets[sn]) return;
+    const ws = wb.Sheets[sn];
+    if(!ws || !ws['!ref']) return;
+    const d = parseDay(ws, sn, teams);
+    if(d) days.push(d);
+  });
+  days.sort((a, b) => (a.date && b.date) ? a.date - b.date : 0);
+  return { teams, staff, days };
+}
+
+/* ================= TIME HELPERS ================= */
+function slotHours(label){ // "22h–00h" -> [22,24] ; "04h–05h" -> [4,5]
+  const m = label.match(/(\d{1,2})\s*h.*?(\d{1,2})\s*h/);
+  if(!m) return null;
+  let s = +m[1], e = +m[2];
+  if(e <= s) e += 24;
+  return [s, e];
+}
+// Une feuille "Vendredi 18" court de 04h à 04h le lendemain : un créneau qui commence
+// avant 04h appartient donc au petit matin du jour suivant.
+function slotStart(day, si){
+  const h = slotHours(day.slots[si].label); if(!h || !day.date) return null;
+  const first = slotHours(day.slots[0].label);
+  const d = new Date(day.date);
+  let start = h[0];
+  if(first && start < first[0]) start += 24;
+  d.setHours(start, 0, 0, 0);
+  return d;
+}
+function slotEnd(day, si){
+  const h = slotHours(day.slots[si].label); if(!h) return null;
+  const st = slotStart(day, si); if(!st) return null;
+  return new Date(st.getTime() + (h[1] - h[0]) * 3600e3);
+}
+function dayTitle(d){
+  if(!d.date) return d.label;
+  return DAYNAMES[d.date.getDay()] + ' ' + d.date.getDate() + ' ' + MONTHNAMES[d.date.getMonth()];
+}
+function shortDay(d){
+  if(!d.date) return d.sheet;
+  return DAYNAMES[d.date.getDay()].slice(0,3) + '. ' + d.date.getDate();
+}
+function currentSlot(now){
+  for(let di = 0; di < DATA.days.length; di++){
+    const d = DATA.days[di];
+    for(let si = 0; si < d.slots.length; si++){
+      const s = slotStart(d, si), e = slotEnd(d, si);
+      if(s && e && now >= s && now < e) return { di, si };
+    }
+  }
+  return null;
+}
+function nextSlot(now){
+  let best = null;
+  DATA.days.forEach((d, di) => d.slots.forEach((_, si) => {
+    const s = slotStart(d, si);
+    if(s && s > now && (!best || s < best.start)) best = { di, si, start: s };
+  }));
+  return best;
+}
+function isMe(name){ return ME && norm(name) === norm(ME); }
+function myPerson(){ return DATA.staff.find(s => isMe(s.name)) || null; }
+function myTeam(){ const p = myPerson(); return p ? DATA.teams.find(t => t.name === p.team) || null : null; }
+function isRepos(task){ return norm(task).startsWith(norm(REPOS_KEY)); }
+
+/* ================= RENDER ================= */
+const app = document.getElementById('app');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function taskHTML(task){
+  if(!task) return '<div class="task empty">—</div>';
+  if(isRepos(task)) return `<div class="task repos">😴 ${esc(task)}</div>`;
+  return `<div class="task">${esc(task)}</div>`;
+}
+
+function slotCard(di, si, opts = {}){
+  const d = DATA.days[di], s = d.slots[si];
+  const mt = myTeam();
+  const rows = DATA.teams.map(t => {
+    const mine = mt && mt.name === t.name;
+    return `<div class="team-row${mine ? ' me' : ''}">
+      <div class="tn"><b>${esc(t.name)}</b>${t.chef ? `<small>Chef : ${esc(t.chef)}</small>` : ''}</div>
+      ${taskHTML(s.tasks[t.name])}
+    </div>`;
+  }).join('');
+  return `<div class="card${opts.now ? ' now' : ''}">
+    <div class="slot-label"><span class="h">${esc(s.label)}</span><span class="d">${esc(shortDay(d))}</span></div>
+    ${s.prog ? `<div class="prog">${esc(s.prog)}</div>` : ''}
+    ${rows}
+  </div>`;
+}
+
+function renderNow(){
+  const now = new Date();
+  const cur = currentSlot(now);
+  const nxt = nextSlot(now);
+  let html = '';
+
+  if(cur){
+    const d = DATA.days[cur.di], s = d.slots[cur.si];
+    const mt = myTeam();
+    const mine = mt ? s.tasks[mt.name] : '';
+    html += `<div class="banner"><span class="live-dot"></span><div>
+      <div class="big">${mt ? (mine ? (isRepos(mine) ? '😴 Repos pour ton équipe' : esc(mine)) : 'Rien de prévu pour ton équipe') : 'En poste maintenant'}</div>
+      <div class="small">${esc(dayTitle(d))} · créneau ${esc(s.label)}${mt ? ' · ' + esc(mt.name) : ''}</div>
+    </div></div>`;
+    html += slotCard(cur.di, cur.si, { now: true });
+  } else {
+    const first = DATA.days[0];
+    const started = first && first.date && now >= first.date;
+    html += `<div class="banner"><div>
+      <div class="big rune">${started ? 'Ragnarök est passé…' : 'Le sémi n’a pas commencé'}</div>
+      <div class="small">${started
+        ? 'Le week-end est terminé. Repose-toi, guerrier.'
+        : (first && first.date ? 'Rendez-vous le ' + dayTitle(first).toLowerCase() + '. En attendant, voici le planning.' : 'Voici le planning.')}</div>
+    </div></div>`;
+  }
+
+  if(nxt){
+    html += `<div class="section-title">Créneau suivant</div>`;
+    html += slotCard(nxt.di, nxt.si);
+  }
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+// regroupe les créneaux consécutifs d'une équipe qui ont la même tâche
+function blocksFor(day, teamName){
+  const out = [];
+  day.slots.forEach((s, si) => {
+    const task = s.tasks[teamName] || '';
+    const last = out[out.length - 1];
+    if(last && last.task === task && last.endSi === si - 1){
+      last.endSi = si; last.progs.push(s.prog);
+    } else {
+      out.push({ task, startSi: si, endSi: si, progs: [s.prog] });
+    }
+  });
+  return out.map(b => {
+    const h1 = slotHours(day.slots[b.startSi].label), h2 = slotHours(day.slots[b.endSi].label);
+    const fmt = h => String(h % 24).padStart(2, '0') + 'h';
+    return { ...b, label: (h1 && h2) ? fmt(h1[0]) + '–' + fmt(h2[1]) : day.slots[b.startSi].label,
+             prog: b.progs.filter(Boolean).join(' · ') };
+  });
+}
+
+function renderMe(){
+  if(!ME){ renderPicker(); return; }
+  const person = myPerson();
+  if(!person){
+    renderPicker('', `Le prénom « ${esc(ME)} » n'est plus dans le planning (il a peut-être été renommé). Choisis-toi à nouveau.`);
+    return;
+  }
+  const team = myTeam();
+  const now = new Date();
+  const cur = currentSlot(now);
+
+  let html = `<div class="me-head">
+    <div class="avatar">${esc(person.name[0] || '?')}</div>
+    <div>
+      <div class="n">${esc(person.name)}</div>
+      <div class="t">${esc(person.team || 'Équipe non définie')}${person.phone ? ' · ' + esc(person.phone) : ''}</div>
+    </div>
+    <button class="change-btn" onclick="changeName()">Changer</button>
+  </div>`;
+
+  if(team){
+    const mates = team.members.filter(m => !isMe(m.name)).map(m => m.name + (norm(m.name) === norm(team.chef) ? ' (chef)' : ''));
+    html += `<div class="team-info">
+      ${team.chef ? `Chef d'équipe : <b>${esc(team.chef)}</b>${isMe(team.chef) ? ' — c’est toi 👑' : ''}<br>` : ''}
+      ${mates.length ? `Avec ${esc(mates.join(', '))}` : ''}
+    </div>`;
+  }
+
+  DATA.days.forEach((d, di) => {
+    html += `<div class="section-title">${esc(dayTitle(d))}</div><div class="card">`;
+    if(!team){ html += `<div class="free">Tu n'es dans aucune équipe — vois avec le respo sémi.</div></div>`; return; }
+    const blocks = blocksFor(d, team.name).filter(b => b.task);
+    if(!blocks.length){ html += `<div class="free">Aucun créneau ce jour — libre comme Fenrir.</div></div>`; return; }
+    blocks.forEach(b => {
+      const isCur = cur && cur.di === di && cur.si >= b.startSi && cur.si <= b.endSi;
+      const end = slotEnd(d, b.endSi);
+      const past = end && end <= now;
+      const repos = isRepos(b.task);
+      html += `<div class="shift${isCur ? ' current' : ''}${repos ? ' repos' : ''}${past && !isCur ? ' past' : ''}">
+        <div class="hr">${esc(b.label)}</div>
+        <div>
+          <div class="pl">${repos ? '😴 ' + esc(b.task) : esc(b.task)}</div>
+          ${b.prog && !repos ? `<div class="with">${esc(b.prog)}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+function nameButtons(filter){
+  const f = norm(filter);
+  return DATA.staff
+    .filter(s => norm(s.name).includes(f))
+    .map(s => `<button class="name-btn" onclick="pickName('${esc(s.name).replace(/'/g, "\\'")}')">${esc(s.name)}${s.team ? `<small>${esc(s.team)}</small>` : ''}</button>`)
+    .join('');
+}
+function renderPicker(filter = '', notice = ''){
+  app.innerHTML = `
+    <div class="section-title">Qui es-tu, guerrier ?</div>
+    ${notice ? `<div class="notice">${notice}</div>` : ''}
+    <div class="picker">
+      <input type="text" id="pickerInput" placeholder="Cherche ton nom…" value="${esc(filter)}" autocomplete="off">
+      <div class="name-grid">${nameButtons(filter)}</div>
+    </div>${footerHTML()}`;
+  const inp = document.getElementById('pickerInput');
+  inp.addEventListener('input', () => { app.querySelector('.name-grid').innerHTML = nameButtons(inp.value); });
+  if(filter === '' && !('ontouchstart' in window)) inp.focus();
+}
+window.pickName = function(n){ ME = n; localStorage.setItem(LS_NAME, n); renderMe(); };
+window.changeName = function(){ ME = null; localStorage.removeItem(LS_NAME); renderPicker(); };
+
+function renderTeams(){
+  const mt = myTeam();
+  let html = '';
+  const ordered = mt ? [mt, ...DATA.teams.filter(t => t !== mt)] : DATA.teams;
+  ordered.forEach(t => {
+    html += `<div class="section-title">${esc(t.name)} <span style="letter-spacing:0">· ${t.members.length}${mt === t ? ' · ton équipe' : ''}</span></div><div class="card">`;
+    if(!t.members.length) html += `<div class="free">Personne dans cette équipe.</div>`;
+    // chef en premier
+    const members = [...t.members].sort((a, b) => (norm(b.name) === norm(t.chef)) - (norm(a.name) === norm(t.chef)));
+    members.forEach(s => {
+      const tel = (s.phone || '').replace(/[^\d+]/g, '');
+      const isChef = t.chef && norm(s.name) === norm(t.chef);
+      html += `<div class="member">
+        <div class="nm">${esc(s.name)}${isChef ? '<span class="chef">Chef</span>' : ''}${isMe(s.name) ? '<span class="badge">(toi)</span>' : ''}</div>
+        <a class="call${tel ? '' : ' none'}" href="tel:${tel}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          ${tel ? esc(s.phone) : '—'}</a>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  const orphans = DATA.staff.filter(s => !s.team);
+  if(orphans.length){
+    html += `<div class="section-title">Sans équipe · ${orphans.length}</div><div class="card">`;
+    orphans.forEach(s => { html += `<div class="member"><div class="nm">${esc(s.name)}</div></div>`; });
+    html += `</div>`;
+  }
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
+function footerHTML(){
+  return `<footer><img src="assets/katharsis-blanc.png" alt="">Katharsis 72 · BDE EDHEC · Depuis 1954</footer>`;
+}
+
+/* ================= NAV & CLOCK ================= */
+document.querySelectorAll('#tabbar button').forEach(b => {
+  b.addEventListener('click', () => {
+    TAB = b.dataset.tab;
+    document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x === b));
+    render();
+    window.scrollTo({ top: 0 });
+  });
+});
+function render(){
+  if(!DATA) return;
+  if(TAB === 'now') renderNow();
+  else if(TAB === 'me') renderMe();
+  else renderTeams();
+}
+function tickClock(){
+  const n = new Date();
+  document.getElementById('clock').innerHTML =
+    `<b>${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}</b><br>` +
+    DAYNAMES[n.getDay()].slice(0,3) + '. ' + n.getDate();
+}
+tickClock(); setInterval(tickClock, 15000);
+// re-render « maintenant » toutes les minutes pour suivre le créneau
+setInterval(() => { if(TAB === 'now' && DATA) renderNow(); }, 60000);
+
+/* ================= LOAD ================= */
+const SPLASH_MIN = 1100; // durée mini du splash (ms)
+function hideSplash(){
+  const s = document.getElementById('splash');
+  s.classList.add('out');
+  setTimeout(() => s.remove(), 600);
+}
+async function load(){
+  const t0 = Date.now();
+  const done = () => new Promise(r => setTimeout(r, Math.max(0, SPLASH_MIN - (Date.now() - t0))));
+  try{
+    const res = await fetch(XLSX_FILE + '?v=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const buf = await res.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    DATA = parseWorkbook(wb);
+    if(!DATA.days.length) throw new Error('Aucune feuille de jour trouvée');
+    document.getElementById('tabbar').classList.remove('hidden');
+    if(!ME || !myPerson()){
+      TAB = 'me';
+      document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x.dataset.tab === 'me'));
+    }
+    render();
+    await done();
+    hideSplash();
+  }catch(e){
+    console.error(e);
+    const isLocal = location.protocol === 'file:';
+    app.innerHTML = `<div class="state">
+      <span class="rune">Odin fronce les sourcils…</span>
+      ${isLocal
+        ? `Tu as ouvert le fichier en local : le navigateur bloque la lecture de l'Excel.<br><br>
+           Pas d'inquiétude — <b>tout marchera une fois le dossier mis en ligne sur GitHub Pages</b> (voir le README).`
+        : `Impossible de charger le planning (<code>${esc(String(e.message || e))}</code>).<br><br>
+           Vérifie que le fichier <b>planning.xlsx</b> est bien à la racine du site, puis recharge la page.`}
+    </div>`;
+    await done();
+    hideSplash();
+  }
+}
+load();
+</script>
+</body>
+</html>
