@@ -222,12 +222,71 @@
   nav button{
     background:none;border:none;color:var(--txt3);font-family:inherit;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;gap:3px;
-    font-size:10.5px;letter-spacing:.06em;padding:4px 16px;border-radius:12px;
+    font-size:10.5px;letter-spacing:.04em;padding:4px 8px;border-radius:12px;
   }
   nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   nav button.active{color:var(--txt)}
   footer{margin-top:34px;text-align:center;color:var(--txt3);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
   footer img{height:56px;opacity:.5;display:block;margin:0 auto 10px}
+
+  /* ===== hero : ma tâche maintenant ===== */
+  .hero{
+    border:1px solid var(--line2);border-radius:20px;padding:18px 18px 16px;margin-bottom:10px;
+    background:linear-gradient(165deg,#222a35,#151920);
+    box-shadow:0 12px 40px rgba(0,0,0,.35);
+  }
+  .hero.repos{background:linear-gradient(165deg,#1a1e26,#12151a);border-color:var(--line)}
+  .hero.idle{background:linear-gradient(165deg,#181d25,#12151a);border-color:var(--line)}
+  .hero-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .hero-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--txt2)}
+  .hero-task{font-size:30px;font-weight:800;line-height:1.08;letter-spacing:-.01em;word-break:break-word}
+  .hero-task.small{font-size:22px}
+  .hero.repos .hero-task{color:var(--txt2)}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-top:10px;font-size:14px;color:var(--txt2)}
+  .hero-meta b{color:var(--txt);font-size:16px;font-variant-numeric:tabular-nums}
+  .hero-meta .sep{color:var(--txt3)}
+  .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:12px}
+  .bar i{display:block;height:100%;background:var(--txt);border-radius:6px;transition:width .6s ease}
+  .bar.sm{height:4px;margin-top:7px;max-width:220px}
+  .hero-prog{font-size:12.5px;color:var(--txt2);line-height:1.45;margin-top:12px;padding:8px 10px;
+    border-left:2px solid var(--line2);background:rgba(0,0,0,.18);border-radius:0 8px 8px 0}
+  .hero-with{font-size:12.5px;color:var(--txt3);margin-top:12px;line-height:1.45}
+  .hero-with b{color:var(--txt2)}
+
+  .next{
+    border:1px solid var(--line);border-radius:16px;padding:13px 16px;margin-bottom:8px;
+    background:var(--card);
+  }
+  .next-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--txt2);margin-bottom:7px}
+  .next-row{display:flex;align-items:center;gap:12px}
+  .next-task{flex:1;font-size:19px;font-weight:800;line-height:1.15}
+  .next.repos .next-task{color:var(--txt2)}
+  .next-when{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:14px;line-height:1.3;flex:none}
+  .next-when small{font-weight:500;color:var(--txt3);font-size:11.5px}
+  .next-prog{font-size:12px;color:var(--txt3);margin-top:8px;line-height:1.45}
+  .after{font-size:12.5px;color:var(--txt3);padding:2px 6px 6px;margin-bottom:6px}
+  .after b{color:var(--txt2);font-weight:600}
+
+  .stats{display:flex;gap:8px;margin:14px 0 4px}
+  .stats span{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 6px;
+    text-align:center;font-size:11.5px;color:var(--txt3)}
+  .stats b{display:block;font-size:17px;color:var(--txt);font-weight:800}
+
+  .card.tl{padding-top:6px;padding-bottom:6px}
+  .shift .hr small{display:block;font-size:10.5px;color:var(--txt3);font-weight:500;margin-top:2px}
+  .shift .body{flex:1;min-width:0}
+  .shift .hint{display:inline-block;margin-left:8px;font-size:11px;font-weight:600;color:var(--bg);background:var(--txt);
+    border-radius:6px;padding:2px 7px;vertical-align:1px;letter-spacing:.02em}
+  .shift.next .hint{background:var(--card2);color:var(--txt2);border:1px solid var(--line2)}
+  .shift.current{margin:0 -16px;padding:11px 16px;background:linear-gradient(90deg,var(--card2),transparent);border-left:3px solid var(--txt)}
+  .shift.current .hr::before{display:none}
+  .shift.current .pl{font-size:16px}
+  .prog-txt{font-weight:500;font-size:13.5px;line-height:1.45}
+
+  .team-now{display:flex;align-items:center;gap:10px;padding:4px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--line);
+    font-size:13px;color:var(--txt2);line-height:1.4}
+  .team-now b{color:var(--txt)}
+  .team-now small{font-size:11.5px;color:var(--txt3)}
   .hidden{display:none !important}
 </style>
 </head>
@@ -271,6 +330,10 @@
     <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Équipes
   </button>
+  <button data-tab="prog">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Programme
+  </button>
 </nav>
 
 </div><!-- /#phone -->
@@ -306,7 +369,7 @@ function cellStr(ws, r, c){
   const v = (cell.w !== undefined ? cell.w : cell.v);
   return v == null ? '' : String(v).trim();
 }
-const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const firstLine = s => String(s || '').split(/\r?\n/)[0].trim();
 
 // cherche une cellule dont le texte normalisé vérifie `pred` ; renvoie {r,c} ou null
@@ -468,7 +531,15 @@ function parseWorkbook(wb){
   return { teams, staff, days };
 }
 
-/* ================= TIME HELPERS ================= */
+/* ================= TEMPS ================= */
+// Mode test : ajoute ?t=2026-09-18T10:30 à l'URL pour simuler une date/heure
+let TIME_OFFSET = 0;
+(function(){
+  const t = new URLSearchParams(location.search).get('t');
+  if(t){ const d = new Date(t); if(!isNaN(d)) TIME_OFFSET = d.getTime() - Date.now(); }
+})();
+const now = () => new Date(Date.now() + TIME_OFFSET);
+
 function slotHours(label){ // "22h–00h" -> [22,24] ; "04h–05h" -> [4,5]
   const m = label.match(/(\d{1,2})\s*h.*?(\d{1,2})\s*h/);
   if(!m) return null;
@@ -477,7 +548,7 @@ function slotHours(label){ // "22h–00h" -> [22,24] ; "04h–05h" -> [4,5]
   return [s, e];
 }
 // Une feuille "Vendredi 18" court de 04h à 04h le lendemain : un créneau qui commence
-// avant 04h appartient donc au petit matin du jour suivant.
+// avant le premier créneau de la feuille appartient au petit matin du jour suivant.
 function slotStart(day, si){
   const h = slotHours(day.slots[si].label); if(!h || !day.date) return null;
   const first = slotHours(day.slots[0].label);
@@ -500,23 +571,73 @@ function shortDay(d){
   if(!d.date) return d.sheet;
   return DAYNAMES[d.date.getDay()].slice(0,3) + '. ' + d.date.getDate();
 }
-function currentSlot(now){
+const fmtH = d => String(d.getHours()).padStart(2,'0') + 'h' + (d.getMinutes() ? String(d.getMinutes()).padStart(2,'0') : '');
+const fmtRange = (a, b) => fmtH(a) + '–' + fmtH(b);
+function fmtDur(ms){ // 2700000 -> "45 min" ; "1 h 15" ; "2 j 3 h"
+  const m = Math.max(0, Math.round(ms / 60000));
+  if(m < 60) return m + ' min';
+  const h = Math.floor(m / 60), mm = m % 60;
+  if(h < 24) return mm ? `${h} h ${String(mm).padStart(2,'0')}` : `${h} h`;
+  const dd = Math.floor(h / 24), hh = h % 24;
+  return hh ? `${dd} j ${hh} h` : `${dd} j`;
+}
+function fmtWhen(d){ // "ven. 18 à 10h"
+  const n = now();
+  const same = d.toDateString() === n.toDateString();
+  return (same ? "aujourd'hui" : DAYNAMES[d.getDay()].slice(0,3).toLowerCase() + '. ' + d.getDate()) + ' à ' + fmtH(d);
+}
+
+// Timeline d'une équipe sur tout le week-end, créneaux consécutifs identiques fusionnés (même à cheval sur deux feuilles)
+const _tl = {};
+function timeline(teamName){
+  if(_tl[teamName]) return _tl[teamName];
+  const raw = [];
+  DATA.days.forEach((d, di) => d.slots.forEach((s, si) => {
+    const st = slotStart(d, si), en = slotEnd(d, si);
+    if(st && en) raw.push({ start: st, end: en, task: (s.tasks[teamName] || '').trim(), prog: s.prog, di, si });
+  }));
+  raw.sort((a, b) => a.start - b.start);
+  const out = [];
+  raw.forEach(x => {
+    const last = out[out.length - 1];
+    if(last && norm(last.task) === norm(x.task) && last.end.getTime() === x.start.getTime()){
+      last.end = x.end; if(x.prog) last.progs.push(x.prog);
+    } else out.push({ start: x.start, end: x.end, task: x.task, progs: x.prog ? [x.prog] : [], di: x.di, si: x.si });
+  });
+  out.forEach(b => { b.prog = b.progs.join(' · '); });
+  return _tl[teamName] = out;
+}
+function currentBlock(teamName, n){ return timeline(teamName).find(b => n >= b.start && n < b.end) || null; }
+function nextTaskBlock(teamName, n){ // prochain bloc avec une vraie tâche (repos compris) après maintenant
+  return timeline(teamName).find(b => b.start > n && b.task) || null;
+}
+function currentSlot(n){
   for(let di = 0; di < DATA.days.length; di++){
     const d = DATA.days[di];
     for(let si = 0; si < d.slots.length; si++){
       const s = slotStart(d, si), e = slotEnd(d, si);
-      if(s && e && now >= s && now < e) return { di, si };
+      if(s && e && n >= s && n < e) return { di, si };
     }
   }
   return null;
 }
-function nextSlot(now){
+function nextSlot(n){
   let best = null;
-  DATA.days.forEach((d, di) => d.slots.forEach((_, si) => {
+  DATA.days.forEach((d, di) => d.slots.forEach((sl, si) => {
+    if(!Object.values(sl.tasks).some(Boolean)) return;   // créneau vide pour tout le monde : on saute
     const s = slotStart(d, si);
-    if(s && s > now && (!best || s < best.start)) best = { di, si, start: s };
+    if(s && s > n && (!best || s < best.start)) best = { di, si, start: s };
   }));
   return best;
+}
+function eventBounds(){
+  let a = null, b = null;
+  DATA.days.forEach(d => d.slots.forEach((_, si) => {
+    const s = slotStart(d, si), e = slotEnd(d, si);
+    if(s && (!a || s < a)) a = s;
+    if(e && (!b || e > b)) b = e;
+  }));
+  return { start: a, end: b };
 }
 function isMe(name){ return ME && norm(name) === norm(ME); }
 function myPerson(){ return DATA.staff.find(s => isMe(s.name)) || null; }
@@ -526,6 +647,7 @@ function isRepos(task){ return norm(task).startsWith(norm(REPOS_KEY)); }
 /* ================= RENDER ================= */
 const app = document.getElementById('app');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const taskLabel = t => !t ? '—' : (isRepos(t) ? '😴 ' + t : t);
 
 function taskHTML(task){
   if(!task) return '<div class="task empty">—</div>';
@@ -533,6 +655,7 @@ function taskHTML(task){
   return `<div class="task">${esc(task)}</div>`;
 }
 
+/* --- Carte « toutes les équipes » sur un créneau --- */
 function slotCard(di, si, opts = {}){
   const d = DATA.days[di], s = d.slots[si];
   const mt = myTeam();
@@ -550,60 +673,105 @@ function slotCard(di, si, opts = {}){
   </div>`;
 }
 
-function renderNow(){
-  const now = new Date();
-  const cur = currentSlot(now);
-  const nxt = nextSlot(now);
+/* --- Hero personnel : ce que je fais maintenant --- */
+function heroHTML(team, n){
+  const cur = currentBlock(team.name, n);
+  const nxt = nextTaskBlock(team.name, n);
+  const bounds = eventBounds();
   let html = '';
 
-  if(cur){
-    const d = DATA.days[cur.di], s = d.slots[cur.si];
-    const mt = myTeam();
-    const mine = mt ? s.tasks[mt.name] : '';
-    html += `<div class="banner"><span class="live-dot"></span><div>
-      <div class="big">${mt ? (mine ? (isRepos(mine) ? '😴 Repos pour ton équipe' : esc(mine)) : 'Rien de prévu pour ton équipe') : 'En poste maintenant'}</div>
-      <div class="small">${esc(dayTitle(d))} · créneau ${esc(s.label)}${mt ? ' · ' + esc(mt.name) : ''}</div>
-    </div></div>`;
-    html += slotCard(cur.di, cur.si, { now: true });
+  if(cur && cur.task){
+    const total = cur.end - cur.start, done = n - cur.start;
+    const pct = Math.min(100, Math.max(0, done / total * 100));
+    const left = cur.end - n;
+    const repos = isRepos(cur.task);
+    const mates = team.members.filter(m => !isMe(m.name)).map(m => m.name);
+    html += `<div class="hero${repos ? ' repos' : ''}">
+      <div class="hero-top"><span class="live-dot"></span><span class="hero-kicker">${repos ? 'Tu es au repos' : 'Tu fais maintenant'} · ${esc(team.name)}</span></div>
+      <div class="hero-task">${repos ? '😴 ' : ''}${esc(cur.task)}</div>
+      <div class="hero-meta">
+        <span><b>${esc(fmtRange(cur.start, cur.end))}</b></span>
+        <span class="sep">·</span>
+        <span>encore <b>${esc(fmtDur(left))}</b></span>
+      </div>
+      <div class="bar"><i style="width:${pct.toFixed(1)}%"></i></div>
+      ${cur.prog && !repos ? `<div class="hero-prog">${esc(cur.prog)}</div>` : ''}
+      ${mates.length ? `<div class="hero-with">Avec ${esc(mates.join(', '))}${team.chef ? ` · chef : <b>${esc(team.chef)}</b>` : ''}</div>` : ''}
+    </div>`;
+  } else if(nxt){
+    // pas de tâche en ce moment (avant le sémi, ou trou dans le planning)
+    const before = bounds.start && n < bounds.start;
+    html += `<div class="hero idle">
+      <div class="hero-top"><span class="hero-kicker">${before ? 'Le sémi n’a pas commencé' : 'Rien pour ton équipe en ce moment'} · ${esc(team.name)}</span></div>
+      <div class="hero-task small">${before ? 'Ragnarök approche…' : 'Souffle un peu.'}</div>
+      <div class="hero-meta"><span>Ton premier créneau ${before ? '' : 'suivant '}dans <b>${esc(fmtDur(nxt.start - n))}</b></span></div>
+    </div>`;
   } else {
-    const first = DATA.days[0];
-    const started = first && first.date && now >= first.date;
-    html += `<div class="banner"><div>
-      <div class="big rune">${started ? 'Ragnarök est passé…' : 'Le sémi n’a pas commencé'}</div>
-      <div class="small">${started
-        ? 'Le week-end est terminé. Repose-toi, guerrier.'
-        : (first && first.date ? 'Rendez-vous le ' + dayTitle(first).toLowerCase() + '. En attendant, voici le planning.' : 'Voici le planning.')}</div>
-    </div></div>`;
+    html += `<div class="hero idle">
+      <div class="hero-top"><span class="hero-kicker">${esc(team.name)}</span></div>
+      <div class="hero-task small rune">Ragnarök est passé…</div>
+      <div class="hero-meta"><span>Le week-end est terminé. Repose-toi, guerrier.</span></div>
+    </div>`;
   }
 
   if(nxt){
-    html += `<div class="section-title">Créneau suivant</div>`;
+    const repos = isRepos(nxt.task);
+    html += `<div class="next${repos ? ' repos' : ''}">
+      <div class="next-kicker">Ensuite · dans ${esc(fmtDur(nxt.start - n))}</div>
+      <div class="next-row">
+        <div class="next-task">${repos ? '😴 ' : ''}${esc(nxt.task)}</div>
+        <div class="next-when">${esc(fmtRange(nxt.start, nxt.end))}<br><small>${esc(fmtWhen(nxt.start))}</small></div>
+      </div>
+      ${nxt.prog && !repos ? `<div class="next-prog">${esc(nxt.prog)}</div>` : ''}
+    </div>`;
+    // et celui d'après, en une ligne
+    const after = timeline(team.name).find(b => b.start >= nxt.end && b.task);
+    if(after) html += `<div class="after">Puis <b>${esc(taskLabel(after.task))}</b> · ${esc(fmtRange(after.start, after.end))}</div>`;
+  }
+  return html;
+}
+
+function renderNow(){
+  const n = now();
+  const team = myTeam();
+  let html = '';
+
+  if(!ME || !myPerson()){
+    html += `<div class="banner"><div>
+      <div class="big">Dis-nous qui tu es</div>
+      <div class="small">Choisis ton prénom dans « Mon planning » pour voir ta tâche du moment et ton compte à rebours.</div>
+    </div></div>`;
+  } else if(!team){
+    html += `<div class="banner"><div>
+      <div class="big">${esc(ME)}, tu n'es dans aucune équipe</div>
+      <div class="small">Vois avec le respo sémi pour être placé.</div>
+    </div></div>`;
+  } else {
+    html += heroHTML(team, n);
+  }
+
+  const cur = currentSlot(n);
+  const nxt = nextSlot(n);
+  if(cur){
+    html += `<div class="section-title">Toutes les équipes · maintenant</div>`;
+    html += slotCard(cur.di, cur.si, { now: true });
+  } else if(!team){
+    const first = DATA.days[0];
+    const started = first && first.date && n >= first.date;
+    html += `<div class="banner"><div>
+      <div class="big rune">${started ? 'Ragnarök est passé…' : 'Le sémi n’a pas commencé'}</div>
+      <div class="small">${started ? 'Le week-end est terminé.' : (first && first.date ? 'Rendez-vous le ' + dayTitle(first).toLowerCase() + '.' : '')}</div>
+    </div></div>`;
+  }
+  if(nxt){
+    html += `<div class="section-title">Toutes les équipes · créneau suivant</div>`;
     html += slotCard(nxt.di, nxt.si);
   }
   html += footerHTML();
   app.innerHTML = html;
 }
 
-// regroupe les créneaux consécutifs d'une équipe qui ont la même tâche
-function blocksFor(day, teamName){
-  const out = [];
-  day.slots.forEach((s, si) => {
-    const task = s.tasks[teamName] || '';
-    const last = out[out.length - 1];
-    if(last && last.task === task && last.endSi === si - 1){
-      last.endSi = si; last.progs.push(s.prog);
-    } else {
-      out.push({ task, startSi: si, endSi: si, progs: [s.prog] });
-    }
-  });
-  return out.map(b => {
-    const h1 = slotHours(day.slots[b.startSi].label), h2 = slotHours(day.slots[b.endSi].label);
-    const fmt = h => String(h % 24).padStart(2, '0') + 'h';
-    return { ...b, label: (h1 && h2) ? fmt(h1[0]) + '–' + fmt(h2[1]) : day.slots[b.startSi].label,
-             prog: b.progs.filter(Boolean).join(' · ') };
-  });
-}
-
+/* --- Mon planning : timeline complète --- */
 function renderMe(){
   if(!ME){ renderPicker(); return; }
   const person = myPerson();
@@ -612,8 +780,7 @@ function renderMe(){
     return;
   }
   const team = myTeam();
-  const now = new Date();
-  const cur = currentSlot(now);
+  const n = now();
 
   let html = `<div class="me-head">
     <div class="avatar">${esc(person.name[0] || '?')}</div>
@@ -624,37 +791,55 @@ function renderMe(){
     <button class="change-btn" onclick="changeName()">Changer</button>
   </div>`;
 
-  if(team){
-    const mates = team.members.filter(m => !isMe(m.name)).map(m => m.name + (norm(m.name) === norm(team.chef) ? ' (chef)' : ''));
-    html += `<div class="team-info">
-      ${team.chef ? `Chef d'équipe : <b>${esc(team.chef)}</b>${isMe(team.chef) ? ' — c’est toi 👑' : ''}<br>` : ''}
-      ${mates.length ? `Avec ${esc(mates.join(', '))}` : ''}
-    </div>`;
+  if(!team){
+    html += `<div class="card"><div class="free">Tu n'es dans aucune équipe — vois avec le respo sémi.</div></div>${footerHTML()}`;
+    app.innerHTML = html; return;
   }
 
-  DATA.days.forEach((d, di) => {
-    html += `<div class="section-title">${esc(dayTitle(d))}</div><div class="card">`;
-    if(!team){ html += `<div class="free">Tu n'es dans aucune équipe — vois avec le respo sémi.</div></div>`; return; }
-    const blocks = blocksFor(d, team.name).filter(b => b.task);
-    if(!blocks.length){ html += `<div class="free">Aucun créneau ce jour — libre comme Fenrir.</div></div>`; return; }
-    blocks.forEach(b => {
-      const isCur = cur && cur.di === di && cur.si >= b.startSi && cur.si <= b.endSi;
-      const end = slotEnd(d, b.endSi);
-      const past = end && end <= now;
-      const repos = isRepos(b.task);
-      html += `<div class="shift${isCur ? ' current' : ''}${repos ? ' repos' : ''}${past && !isCur ? ' past' : ''}">
-        <div class="hr">${esc(b.label)}</div>
-        <div>
-          <div class="pl">${repos ? '😴 ' + esc(b.task) : esc(b.task)}</div>
-          ${b.prog && !repos ? `<div class="with">${esc(b.prog)}</div>` : ''}
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
+  const mates = team.members.filter(m => !isMe(m.name)).map(m => m.name + (norm(m.name) === norm(team.chef) ? ' (chef)' : ''));
+  html += `<div class="team-info">
+    ${team.chef ? `Chef d'équipe : <b>${esc(team.chef)}</b>${isMe(team.chef) ? ' — c’est toi 👑' : ''}<br>` : ''}
+    ${mates.length ? `Avec ${esc(mates.join(', '))}` : ''}
+  </div>`;
+
+  const blocks = timeline(team.name).filter(b => b.task);
+  const cur = currentBlock(team.name, n);
+  const nxt = nextTaskBlock(team.name, n);
+  // total heures de poste (hors repos)
+  const hours = blocks.filter(b => !isRepos(b.task)).reduce((a, b) => a + (b.end - b.start) / 3600e3, 0);
+  html += `<div class="stats"><span><b>${blocks.filter(b => !isRepos(b.task)).length}</b> postes</span><span><b>${hours}</b> h de staff</span><span><b>${blocks.filter(b => isRepos(b.task)).reduce((a, b) => a + (b.end - b.start) / 3600e3, 0)}</b> h de repos</span></div>`;
+
+  let lastDi = -1, open = false;
+  blocks.forEach(b => {
+    if(b.di !== lastDi){
+      if(open) html += `</div>`;
+      html += `<div class="section-title">${esc(dayTitle(DATA.days[b.di]))}</div><div class="card tl">`;
+      lastDi = b.di; open = true;
+    }
+    const isCur = cur === b, isNext = nxt === b;
+    const past = b.end <= n;
+    const repos = isRepos(b.task);
+    let hint = '';
+    if(isCur) hint = `encore ${fmtDur(b.end - n)}`;
+    else if(isNext) hint = `dans ${fmtDur(b.start - n)}`;
+    const pct = isCur ? Math.min(100, Math.max(0, (n - b.start) / (b.end - b.start) * 100)) : 0;
+    html += `<div class="shift${isCur ? ' current' : ''}${isNext ? ' next' : ''}${repos ? ' repos' : ''}${past ? ' past' : ''}">
+      <div class="hr">${esc(fmtRange(b.start, b.end))}<small>${esc(fmtDur(b.end - b.start))}</small></div>
+      <div class="body">
+        <div class="pl">${repos ? '😴 ' : ''}${esc(b.task)}${hint ? `<span class="hint">${esc(hint)}</span>` : ''}</div>
+        ${isCur ? `<div class="bar sm"><i style="width:${pct.toFixed(1)}%"></i></div>` : ''}
+        ${b.prog && !repos ? `<div class="with">${esc(b.prog)}</div>` : ''}
+      </div>
+    </div>`;
   });
+  if(open) html += `</div>`;
+  if(!blocks.length) html += `<div class="card"><div class="free">Aucun créneau — libre comme Fenrir.</div></div>`;
 
   html += footerHTML();
   app.innerHTML = html;
+  // faire défiler jusqu'au créneau en cours
+  const el = app.querySelector('.shift.current') || app.querySelector('.shift.next');
+  if(el && !renderMe._scrolled){ renderMe._scrolled = true; setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80); }
 }
 
 function nameButtons(filter){
@@ -669,24 +854,32 @@ function renderPicker(filter = '', notice = ''){
     <div class="section-title">Qui es-tu, guerrier ?</div>
     ${notice ? `<div class="notice">${notice}</div>` : ''}
     <div class="picker">
-      <input type="text" id="pickerInput" placeholder="Cherche ton nom…" value="${esc(filter)}" autocomplete="off">
+      <input type="text" id="pickerInput" placeholder="Cherche ton prénom…" value="${esc(filter)}" autocomplete="off">
       <div class="name-grid">${nameButtons(filter)}</div>
     </div>${footerHTML()}`;
   const inp = document.getElementById('pickerInput');
   inp.addEventListener('input', () => { app.querySelector('.name-grid').innerHTML = nameButtons(inp.value); });
   if(filter === '' && !('ontouchstart' in window)) inp.focus();
 }
-window.pickName = function(n){ ME = n; localStorage.setItem(LS_NAME, n); renderMe(); };
+window.pickName = function(nm){
+  ME = nm; localStorage.setItem(LS_NAME, nm);
+  TAB = 'now'; setTab('now'); render();
+};
 window.changeName = function(){ ME = null; localStorage.removeItem(LS_NAME); renderPicker(); };
 
+/* --- Équipes : membres + ce que fait chaque équipe maintenant --- */
 function renderTeams(){
   const mt = myTeam();
+  const n = now();
   let html = '';
   const ordered = mt ? [mt, ...DATA.teams.filter(t => t !== mt)] : DATA.teams;
   ordered.forEach(t => {
+    const cur = currentBlock(t.name, n);
+    const nxt = nextTaskBlock(t.name, n);
     html += `<div class="section-title">${esc(t.name)} <span style="letter-spacing:0">· ${t.members.length}${mt === t ? ' · ton équipe' : ''}</span></div><div class="card">`;
+    if(cur && cur.task) html += `<div class="team-now"><span class="live-dot"></span><div><b>${esc(taskLabel(cur.task))}</b> jusqu'à ${esc(fmtH(cur.end))}${nxt ? `<br><small>puis ${esc(taskLabel(nxt.task))} à ${esc(fmtH(nxt.start))}</small>` : ''}</div></div>`;
+    else if(nxt) html += `<div class="team-now"><div><small>Prochain créneau : ${esc(taskLabel(nxt.task))} · ${esc(fmtWhen(nxt.start))}</small></div></div>`;
     if(!t.members.length) html += `<div class="free">Personne dans cette équipe.</div>`;
-    // chef en premier
     const members = [...t.members].sort((a, b) => (norm(b.name) === norm(t.chef)) - (norm(a.name) === norm(t.chef)));
     members.forEach(s => {
       const tel = (s.phone || '').replace(/[^\d+]/g, '');
@@ -710,36 +903,64 @@ function renderTeams(){
   app.innerHTML = html;
 }
 
+/* --- Programme de la journée (colonne B des feuilles) --- */
+function renderProg(){
+  const n = now();
+  const cur = currentSlot(n);
+  let html = '';
+  DATA.days.forEach((d, di) => {
+    html += `<div class="section-title">${esc(dayTitle(d))}</div><div class="card tl">`;
+    let any = false;
+    d.slots.forEach((s, si) => {
+      if(!s.prog) return;
+      any = true;
+      const isCur = cur && cur.di === di && cur.si === si;
+      const en = slotEnd(d, si);
+      const past = en && en <= n;
+      html += `<div class="shift${isCur ? ' current' : ''}${past ? ' past' : ''}">
+        <div class="hr">${esc(s.label)}</div>
+        <div class="body"><div class="pl prog-txt">${esc(s.prog)}</div></div>
+      </div>`;
+    });
+    if(!any) html += `<div class="free">Rien d'indiqué pour ce jour.</div>`;
+    html += `</div>`;
+  });
+  html += footerHTML();
+  app.innerHTML = html;
+}
+
 function footerHTML(){
   return `<footer><img src="assets/katharsis-blanc.png" alt="">Katharsis 72 · BDE EDHEC · Depuis 1954</footer>`;
 }
 
-/* ================= NAV & CLOCK ================= */
+/* ================= NAV & HORLOGE ================= */
+function setTab(t){
+  TAB = t;
+  document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x.dataset.tab === t));
+}
 document.querySelectorAll('#tabbar button').forEach(b => {
-  b.addEventListener('click', () => {
-    TAB = b.dataset.tab;
-    document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x === b));
-    render();
-    window.scrollTo({ top: 0 });
-  });
+  b.addEventListener('click', () => { setTab(b.dataset.tab); render(); window.scrollTo({ top: 0 }); const m = document.querySelector('main'); if(m) m.scrollTop = 0; });
 });
 function render(){
   if(!DATA) return;
   if(TAB === 'now') renderNow();
   else if(TAB === 'me') renderMe();
+  else if(TAB === 'prog') renderProg();
   else renderTeams();
 }
 function tickClock(){
-  const n = new Date();
+  const n = now();
   document.getElementById('clock').innerHTML =
     `<b>${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}</b><br>` +
-    DAYNAMES[n.getDay()].slice(0,3) + '. ' + n.getDate();
+    DAYNAMES[n.getDay()].slice(0,3) + '. ' + n.getDate() + (TIME_OFFSET ? ' ⏱' : '');
 }
-tickClock(); setInterval(tickClock, 15000);
-// re-render « maintenant » toutes les minutes pour suivre le créneau
-setInterval(() => { if(TAB === 'now' && DATA) renderNow(); }, 60000);
+tickClock(); setInterval(tickClock, 10000);
+// re-rendu régulier pour faire vivre les comptes à rebours (toutes les 30 s), sans casser une saisie en cours
+setInterval(() => { if(!DATA) return; if(document.getElementById('pickerInput')) return; render(); }, 30000);
+// au retour sur l'app (écran rallumé), on rafraîchit tout de suite
+document.addEventListener('visibilitychange', () => { if(!document.hidden){ tickClock(); render(); } });
 
-/* ================= LOAD ================= */
+/* ================= CHARGEMENT ================= */
 const SPLASH_MIN = 1100; // durée mini du splash (ms)
 function hideSplash(){
   const s = document.getElementById('splash');
@@ -757,10 +978,7 @@ async function load(){
     DATA = parseWorkbook(wb);
     if(!DATA.days.length) throw new Error('Aucune feuille de jour trouvée');
     document.getElementById('tabbar').classList.remove('hidden');
-    if(!ME || !myPerson()){
-      TAB = 'me';
-      document.querySelectorAll('#tabbar button').forEach(x => x.classList.toggle('active', x.dataset.tab === 'me'));
-    }
+    if(!ME || !myPerson()) setTab('me');
     render();
     await done();
     hideSplash();
