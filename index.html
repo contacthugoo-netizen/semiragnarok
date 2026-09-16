@@ -287,6 +287,10 @@
     font-size:13px;color:var(--txt2);line-height:1.4}
   .team-now b{color:var(--txt)}
   .team-now small{font-size:11.5px;color:var(--txt3)}
+  .sos{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:4px 6px 10px;margin-bottom:6px}
+  .sos-l{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--txt3);margin-right:2px}
+  .mates{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .call.none{opacity:.35;pointer-events:none}
   .hidden{display:none !important}
 </style>
 </head>
@@ -347,6 +351,23 @@ const EVENT_YEAR = 2026;             // année du sémi
 const REPOS_KEY = 'REPOS';
 const LS_NAME = 'semi_staff_me';
 
+/* Annuaire de secours : utilisé si la colonne Téléphone du planning.xlsx est vide.
+   Clé = prénom (accents / tirets ignorés). Modifie ici ou dans l'Excel, les deux marchent. */
+const PHONES = {
+  'Adrien':'06 34 14 11 41', 'Amélie':'06 47 06 59 06', 'Aurélien':'06 56 89 75 37', 'Benoit':'07 76 94 72 06',
+  'Camille':'06 31 34 67 77', 'Célie':'07 69 39 90 13', 'Colombe':'06 99 93 49 01', 'Gatien':'07 60 18 80 57',
+  'Léa':'07 86 11 48 74', 'Léna':'07 69 46 06 00', 'Louis':'06 25 77 72 01', 'Lucien':'07 67 99 06 45',
+  'Maelle':'07 68 92 06 44', 'Malia':'06 32 28 33 81', 'Marthe':'07 68 51 39 85', 'Maryline':'07 67 50 36 80',
+  'Nathan':'06 29 50 09 61', 'Samuel':'06 17 31 15 00', 'Teddy':'06 03 75 15 74', 'Zoé':'06 52 74 02 08',
+  'Blanche':'07 69 12 26 64', 'Ulysse':'07 68 16 72 33', 'Macéo':'07 69 97 15 99', 'Léo-Paul':'07 82 95 66 60',
+  'Hugo':'06 70 77 90 21', 'Apolline':'07 83 52 50 84',
+};
+/* Organisation : affichée en haut de l'onglet Équipes et sous « Maintenant » (bouton d'appel rapide) */
+const ORGA = [
+  { name:'Hugo',     role:'Respo Sémi', phone:'06 70 77 90 21' },
+  { name:'Apolline', role:'Respo Sémi', phone:'07 83 52 50 84' },
+];
+
 const MONTHS = {jan:1,'fév':2,fev:2,mar:3,avr:4,mai:5,juin:6,juil:7,'août':8,aout:8,sep:9,sept:9,oct:10,nov:11,'déc':12,dec:12};
 const DAYNAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MONTHNAMES = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -371,6 +392,18 @@ function cellStr(ws, r, c){
 }
 const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const firstLine = s => String(s || '').split(/\r?\n/)[0].trim();
+const nameKey = s => norm(s).replace(/[^a-z]/g, '');                 // "Léo-Paul" -> "leopaul"
+const PHONE_BY_KEY = Object.fromEntries(Object.entries(PHONES).map(([k, v]) => [nameKey(k), v]));
+function lookupPhone(name){ return PHONE_BY_KEY[nameKey(name)] || ''; }
+function telHref(phone){ // "06 34 14 11 41" -> "tel:+33634141141"
+  let d = String(phone || '').replace(/[^\d+]/g, '');
+  if(/^0\d{9}$/.test(d)) d = '+33' + d.slice(1);
+  return d ? 'tel:' + d : '';
+}
+function fmtPhone(phone){ // "0769122664" -> "07 69 12 26 64"
+  const d = String(phone || '').replace(/\D/g, '');
+  return /^\d{10}$/.test(d) ? d.replace(/(\d{2})(?=\d)/g, '$1 ') : String(phone || '');
+}
 
 // cherche une cellule dont le texte normalisé vérifie `pred` ; renvoie {r,c} ou null
 function findCell(ws, pred, maxR = 80, maxC = 30){
@@ -447,15 +480,15 @@ function parseParametres(P){
     }
   }
 
-  // Fusion : la grille prime, la colonne "Équipe (auto)" sert de secours
-  staff.forEach(s => { s.team = gridMembership[norm(s.name)] || s.team || ''; });
+  // Fusion : la grille prime, la colonne "Équipe (auto)" sert de secours ; téléphone : Excel, sinon annuaire PHONES
+  staff.forEach(s => { s.team = gridMembership[norm(s.name)] || s.team || ''; s.phone = fmtPhone(s.phone || lookupPhone(s.name)); });
   // personnes dans la grille mais absentes du tableau → on les ajoute quand même
   Object.keys(gridMembership).forEach(k => {
     if(!staff.some(s => norm(s.name) === k)){
       // retrouver la casse d'origine
       let orig = k;
       for(let r = 0; r < 60; r++) for(let c = 0; c < 12; c++){ const v = cellStr(P, r, c); if(norm(v) === k){ orig = v; r = 60; break; } }
-      staff.push({ name: orig, team: gridMembership[k], phone: '', genre: '' });
+      staff.push({ name: orig, team: gridMembership[k], phone: fmtPhone(lookupPhone(orig)), genre: '' });
     }
   });
 
@@ -649,6 +682,16 @@ const app = document.getElementById('app');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const taskLabel = t => !t ? '—' : (isRepos(t) ? '😴 ' + t : t);
 
+const PHONE_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+function callBtn(phone, label){
+  const href = telHref(phone);
+  return `<a class="call${href ? '' : ' none'}" href="${href || '#'}">${PHONE_SVG} ${esc(label || (href ? fmtPhone(phone) : '—'))}</a>`;
+}
+function orgaRow(){
+  if(!ORGA.length) return '';
+  return `<div class="sos"><span class="sos-l">Un souci ?</span>${ORGA.map(o => callBtn(o.phone, o.name)).join('')}</div>`;
+}
+
 function taskHTML(task){
   if(!task) return '<div class="task empty">—</div>';
   if(isRepos(task)) return `<div class="task repos">😴 ${esc(task)}</div>`;
@@ -749,6 +792,7 @@ function renderNow(){
   } else {
     html += heroHTML(team, n);
   }
+  html += orgaRow();
 
   const cur = currentSlot(n);
   const nxt = nextSlot(n);
@@ -800,7 +844,8 @@ function renderMe(){
   html += `<div class="team-info">
     ${team.chef ? `Chef d'équipe : <b>${esc(team.chef)}</b>${isMe(team.chef) ? ' — c’est toi 👑' : ''}<br>` : ''}
     ${mates.length ? `Avec ${esc(mates.join(', '))}` : ''}
-  </div>`;
+  </div>
+  <div class="mates">${team.members.filter(m => !isMe(m.name)).map(m => callBtn(m.phone, m.name)).join('')}</div>`;
 
   const blocks = timeline(team.name).filter(b => b.task);
   const cur = currentBlock(team.name, n);
@@ -872,6 +917,16 @@ function renderTeams(){
   const mt = myTeam();
   const n = now();
   let html = '';
+  if(ORGA.length){
+    html += `<div class="section-title">Organisation</div><div class="card">`;
+    ORGA.forEach(o => {
+      html += `<div class="member">
+        <div class="nm">${esc(o.name)}${o.role ? `<span class="badge">${esc(o.role)}</span>` : ''}${isMe(o.name) ? '<span class="badge">(toi)</span>' : ''}</div>
+        ${callBtn(o.phone)}
+      </div>`;
+    });
+    html += `</div>`;
+  }
   const ordered = mt ? [mt, ...DATA.teams.filter(t => t !== mt)] : DATA.teams;
   ordered.forEach(t => {
     const cur = currentBlock(t.name, n);
@@ -882,13 +937,10 @@ function renderTeams(){
     if(!t.members.length) html += `<div class="free">Personne dans cette équipe.</div>`;
     const members = [...t.members].sort((a, b) => (norm(b.name) === norm(t.chef)) - (norm(a.name) === norm(t.chef)));
     members.forEach(s => {
-      const tel = (s.phone || '').replace(/[^\d+]/g, '');
       const isChef = t.chef && norm(s.name) === norm(t.chef);
       html += `<div class="member">
         <div class="nm">${esc(s.name)}${isChef ? '<span class="chef">Chef</span>' : ''}${isMe(s.name) ? '<span class="badge">(toi)</span>' : ''}</div>
-        <a class="call${tel ? '' : ' none'}" href="tel:${tel}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          ${tel ? esc(s.phone) : '—'}</a>
+        ${callBtn(s.phone)}
       </div>`;
     });
     html += `</div>`;
@@ -896,7 +948,7 @@ function renderTeams(){
   const orphans = DATA.staff.filter(s => !s.team);
   if(orphans.length){
     html += `<div class="section-title">Sans équipe · ${orphans.length}</div><div class="card">`;
-    orphans.forEach(s => { html += `<div class="member"><div class="nm">${esc(s.name)}</div></div>`; });
+    orphans.forEach(s => { html += `<div class="member"><div class="nm">${esc(s.name)}</div>${callBtn(s.phone)}</div>`; });
     html += `</div>`;
   }
   html += footerHTML();
